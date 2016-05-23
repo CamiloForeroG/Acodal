@@ -10,21 +10,17 @@
 namespace AcodalCongress
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class Usuario
+    public partial class ValidaUsuario_Result
     {
         public int ID { get; set; }
         public string NombreCompleto { get; set; }
         public string NombreUsuario { get; set; }
+        public string Pass { get; set; }
         public Nullable<int> Empresa { get; set; }
         public int Documento { get; set; }
         public string Direccion { get; set; }
         public int Perfil { get; set; }
-        public string Pass { get; set; }
-        public string Email { get; set; }
-    
-        public virtual Empresa Empresa1 { get; set; }
-        public virtual Perfile Perfile { get; set; }
+        public string Nombre { get; set; }
     }
 }

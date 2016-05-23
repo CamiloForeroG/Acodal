@@ -12,6 +12,8 @@ namespace AcodalCongress
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class CongresoAcodalEntities : DbContext
     {
@@ -29,5 +31,26 @@ namespace AcodalCongress
         public virtual DbSet<Empresa> Empresas { get; set; }
         public virtual DbSet<Perfile> Perfiles { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
+    
+        public virtual ObjectResult<ValidaUsuario_Result> ValidaUsuario(string alias, string email, string pass, Nullable<int> empresa)
+        {
+            var aliasParameter = alias != null ?
+                new ObjectParameter("Alias", alias) :
+                new ObjectParameter("Alias", typeof(string));
+    
+            var emailParameter = email != null ?
+                new ObjectParameter("Email", email) :
+                new ObjectParameter("Email", typeof(string));
+    
+            var passParameter = pass != null ?
+                new ObjectParameter("Pass", pass) :
+                new ObjectParameter("Pass", typeof(string));
+    
+            var empresaParameter = empresa.HasValue ?
+                new ObjectParameter("Empresa", empresa) :
+                new ObjectParameter("Empresa", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ValidaUsuario_Result>("ValidaUsuario", aliasParameter, emailParameter, passParameter, empresaParameter);
+        }
     }
 }

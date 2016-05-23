@@ -40,6 +40,8 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="NombreCompleto" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="NombreUsuario" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Pass" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="150" />
           <Property Name="Empresa" Type="int" />
           <Property Name="Documento" Type="int" Nullable="false" />
           <Property Name="Direccion" Type="varchar" MaxLength="75" Nullable="false" />
@@ -81,6 +83,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="ValidaUsuario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Alias" Type="varchar" Mode="In" />
+          <Parameter Name="Email" Type="varchar" Mode="In" />
+          <Parameter Name="Pass" Type="varchar" Mode="In" />
+          <Parameter Name="Empresa" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="CongresoAcodalModelStoreContainer">
           <EntitySet Name="Ciudades" EntityType="Self.Ciudades" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Empresas" EntityType="Self.Empresas" Schema="dbo" store:Type="Tables" />
@@ -148,6 +156,8 @@
           <Property Name="Perfil" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Empresa1" Relationship="Self.FK_Usuarios_Empresas" FromRole="Usuarios" ToRole="Empresas" />
           <NavigationProperty Name="Perfile" Relationship="Self.FK_Usuarios_Perfiles" FromRole="Usuarios" ToRole="Perfiles" />
+          <Property Name="Pass" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_Usuarios_Empresas">
           <End Role="Empresas" Type="Self.Empresa" Multiplicity="0..1" />
@@ -190,6 +200,12 @@
             <End Role="Ciudade" EntitySet="Ciudades" />
             <End Role="Empresa" EntitySet="Empresas" />
           </AssociationSet>
+          <FunctionImport Name="ValidaUsuario" ReturnType="Collection(CongresoAcodalModel.ValidaUsuario_Result)">
+            <Parameter Name="Alias" Mode="In" Type="String" />
+            <Parameter Name="Email" Mode="In" Type="String" />
+            <Parameter Name="Pass" Mode="In" Type="String" />
+            <Parameter Name="Empresa" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <Association Name="FK_Empresas_Ciudades">
           <End Type="CongresoAcodalModel.Ciudade" Role="Ciudade" Multiplicity="0..1" />
@@ -203,6 +219,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="ValidaUsuario_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="NombreCompleto" Nullable="false" MaxLength="200" />
+          <Property Type="String" Name="NombreUsuario" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Pass" Nullable="false" MaxLength="100" />
+          <Property Type="Int32" Name="Empresa" Nullable="true" />
+          <Property Type="Int32" Name="Documento" Nullable="false" />
+          <Property Type="String" Name="Direccion" Nullable="false" MaxLength="75" />
+          <Property Type="Int32" Name="Perfil" Nullable="false" />
+          <Property Type="String" Name="Nombre" Nullable="false" MaxLength="250" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -243,6 +270,8 @@
           <EntitySetMapping Name="Usuarios">
             <EntityTypeMapping TypeName="CongresoAcodalModel.Usuario">
               <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Pass" ColumnName="Pass" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="NombreCompleto" ColumnName="NombreCompleto" />
                 <ScalarProperty Name="NombreUsuario" ColumnName="NombreUsuario" />
@@ -253,6 +282,21 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="ValidaUsuario" FunctionName="CongresoAcodalModel.Store.ValidaUsuario">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="CongresoAcodalModel.ValidaUsuario_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="NombreCompleto" ColumnName="NombreCompleto" />
+                <ScalarProperty Name="NombreUsuario" ColumnName="NombreUsuario" />
+                <ScalarProperty Name="Pass" ColumnName="Pass" />
+                <ScalarProperty Name="Empresa" ColumnName="Empresa" />
+                <ScalarProperty Name="Documento" ColumnName="Documento" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="Perfil" ColumnName="Perfil" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
